@@ -69,7 +69,8 @@ class BunnyCDN extends SitePublisher {
             $this->local_file_contents = file_get_contents( $this->local_file );
 
             $this->hash_key =
-                $this->target_path . basename( $this->local_file );
+                $this->target_path;
+                // $this->target_path . basename( $this->local_file );
 
             if ( isset( $this->file_paths_and_hashes[ $this->hash_key ] ) ) {
                 $prev = $this->file_paths_and_hashes[ $this->hash_key ];
@@ -114,6 +115,7 @@ class BunnyCDN extends SitePublisher {
             curl_setopt( $ch, CURLOPT_URL, $endpoint );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 0 );
             curl_setopt( $ch, CURLOPT_POST, 1 );
@@ -166,6 +168,7 @@ class BunnyCDN extends SitePublisher {
             curl_setopt( $ch, CURLOPT_URL, $remote_path );
             curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+            curl_setopt( $ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1 );
             curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, 0 );
             curl_setopt( $ch, CURLOPT_HEADER, 0 );
             curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1 );
@@ -215,8 +218,6 @@ class BunnyCDN extends SitePublisher {
     }
 
     public function createFileInBunnyCDN() {
-        error_log('creating file in bunny' . $this->local_file);
-
         $remote_path = $this->api_base . '/' .
             $this->storage_zone_name .
             '/' . $this->target_path;
@@ -242,7 +243,5 @@ class BunnyCDN extends SitePublisher {
             http_response_code( $this->client->status_code );
             throw new Exception( $err );
         }
-
-        error_log('successfully created' . $remote_path);
     }
 }
